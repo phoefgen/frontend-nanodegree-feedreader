@@ -21,8 +21,6 @@ $(function () {
       expect(allFeeds.length).not.toBe(0);
     });
 
-
-
     it('have URLs', function () {
       /* loops through each feed
       * in the allFeeds object and ensures it has a URL defined
@@ -81,23 +79,46 @@ $(function () {
 
   });
 
-  describe('Initial Entries', function (){
+  describe('Initial Entries', function () {
+    /* Ensure that when the loadFeed
+    * function is called and completes its work, there is at least
+    * a single .entry element within the .feed container.
+    */
+
+    beforeEach(function (done) {
+      loadFeed(0, done);
+    });
+
+    // Check for entries.
+    it('have items', function () {
+      // Select entry elements, with a feed ancestor
+      let numItems = $('.feed .entry').length;
+      expect(numItems).not.toBe(0);
+    });
 
   });
 
+  describe('New Feed Selection', function () {
+    /*ensures when a new feed is loaded
+    * by the loadFeed function that the content actually changes.
+    */
+    let currentContent;
 
-  /* TODO: Write a test that ensures when the loadFeed
-   * function is called and completes its work, there is at least
-   * a single .entry element within the .feed container.
-   * Remember, loadFeed() is asynchronous so this test will require
-   * the use of Jasmine's beforeEach and asynchronous done() function.
-   */
+    beforeEach(function (done) {
+      // Remove content from feed.
+      currentContent = $('.feed').text('');
+      // Re-add content to feed (different to the default of Index0)
+      const lastFeed = allFeeds.length - 1;
+      console.log(lastFeed);
+      loadFeed(lastFeed, done);
+      done();
+    });
 
-  /* TODO: Write a new test suite named "New Feed Selection" */
-
-  /* TODO: Write a test that ensures when a new feed is loaded
-   * by the loadFeed function that the content actually changes.
-   * Remember, loadFeed() is asynchronous.
-   */
+    // Check for changing content.
+    it('updates content', function () {
+      const updatedContent = $('.feed').text();
+      expect(currentContent).not.toBe(updatedContent);
+    });
+  });
 
 }());
