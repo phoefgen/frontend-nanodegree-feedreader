@@ -50,7 +50,6 @@ $(function () {
 
     const clickMenu = function () {
       $('.menu-icon-link').click();
-      return;
     };
 
     it('is hidden by default', function () {
