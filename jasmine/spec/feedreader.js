@@ -26,9 +26,9 @@ $(function () {
       * in the allFeeds object and ensures it has a URL defined
       * and that the URL is not empty.
       */
-      for (var feedURL of allFeeds) {
-        expect(feedURL).toBeDefined();
-        expect(feedURL.length).not.toBe(0);
+      for (var feed of allFeeds) {
+        expect(feed.url).toBeDefined();
+        expect(feed.url.length).not.toBe(0);
       }
     });
 
@@ -37,9 +37,9 @@ $(function () {
     * and that the name is not empty.
     */
     it('have names', function () {
-      for (var feedName of allFeeds) {
-        expect(feedName).toBeDefined();
-        expect(feedName.length).not.toBe(0);
+      for (var feed of allFeeds) {
+        expect(feed.name).toBeDefined();
+        expect(feed.name.length).not.toBe(0);
       }
     });
   });
@@ -47,22 +47,15 @@ $(function () {
   describe('The Menu', function () {
     /* Ensures the menu is in a sane state.
     */
-    let menuClasses;
-
-    beforeEach(function () {
-      // Get the current classes assigned to the body
-      menuClasses = $('body').attr('class');
-    });
 
     const clickMenu = function () {
       $('.menu-icon-link').click();
-      let currentState = $('body').attr('class');
-      return currentState;
+      return;
     };
 
     it('is hidden by default', function () {
       // Expected default behaviour is for the menu to be hidden at pageload
-      expect(menuClasses.includes('menu-hidden')).toBe(true);
+      expect($('body').hasClass('menu-hidden')).toBeTruthy();
 
     });
 
@@ -72,11 +65,12 @@ $(function () {
       */
 
       // First click
-      expect(clickMenu()).not.toBe(menuClasses);
+      clickMenu();
+      expect($('body').hasClass('menu-hidden')).toBeFalsy();
       // Second click
-      expect(clickMenu()).toBe(menuClasses);
+      clickMenu();
+      expect($('body').hasClass('menu-hidden')).toBeTruthy();
     });
-
   });
 
   describe('Initial Entries', function () {
@@ -102,23 +96,35 @@ $(function () {
     /*ensures when a new feed is loaded
     * by the loadFeed function that the content actually changes.
     */
-    let currentContent;
+    let newFeed,
+        oldFeed;
 
     beforeEach(function (done) {
+
       // Remove content from feed.
-      currentContent = $('.feed').text('');
+      $('.feed').text('');
+
+      // Pull explicit feed (the first one);
+      loadFeed(0, function (){
+        oldFeed = $('.feed').text();
+      });
+
       // Re-add content to feed (different to the default of Index0)
-      const lastFeed = allFeeds.length - 1;
-      console.log(lastFeed);
-      loadFeed(lastFeed, done);
-      done();
+      loadFeed(1, function () {
+        // Collects the last feed in the list of feeds.
+        newFeed = $('.feed').text();
+        done();
+      });
     });
 
     // Check for changing content.
     it('updates content', function () {
-      const updatedContent = $('.feed').text();
-      expect(currentContent).not.toBe(updatedContent);
+      if (allFeeds.length < 2) {
+        console.log(allFeeds.length);
+        // There are insufficient feeds to test this functionality.
+        pending();
+      }
+      expect(newFeed).not.toBe(oldFeed);
     });
   });
-
 }());
