@@ -96,7 +96,7 @@ $(function () {
     * by the loadFeed function that the content actually changes.
     */
     let newFeed,
-        oldFeed;
+      oldFeed;
 
     beforeEach(function (done) {
 
@@ -104,15 +104,14 @@ $(function () {
       $('.feed').text('');
 
       // Pull explicit feed (the first one);
-      loadFeed(0, function (){
+      loadFeed(0, function () {
         oldFeed = $('.feed').text();
-      });
-
-      // Re-add content to feed (different to the default of Index0)
-      loadFeed(1, function () {
-        // Collects the last feed in the list of feeds.
-        newFeed = $('.feed').text();
-        done();
+        // Re-add content to feed (different to the default of Index0)
+        loadFeed(1, function () {
+          // Collects the last feed in the list of feeds.
+          newFeed = $('.feed').text();
+          done();
+        });
       });
     });
 
@@ -121,9 +120,14 @@ $(function () {
       if (allFeeds.length < 2) {
         console.log(allFeeds.length);
         // There are insufficient feeds to test this functionality.
+
+        // Call pending from the Jasmine lib, this is not execute the suites if there are
+        // insufficient feeds in allFeeds. Pending tests are returned as orange in the Jasmine UI.
         pending();
       }
       expect(newFeed).not.toBe(oldFeed);
     });
   });
 }());
+
+
